@@ -1,3 +1,5 @@
+export type BlizzardData = any
+
 const parser = new DOMParser()
 
 const toSnakeCase = (string: string) =>
@@ -23,7 +25,7 @@ const parse = (string: string) => {
 }
 
 export const parseBlizzardData = (html: string) => {
-  const result: any = {}
+  const result: BlizzardData = {}
   let title: string, subtitle: string
 
   const blizzard = parser.parseFromString(html, 'text/html')
