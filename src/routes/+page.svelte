@@ -19,7 +19,7 @@
     if (!file) return
 
     const html = await file.text()
-    data = parseBlizzardData(html)
+    ;(window as any).data = data = parseBlizzardData(html)
 
     interpret()
   }
@@ -46,5 +46,11 @@
 
 <select on:change={handleSeasonChange}>
   <option value="">All</option>
+  <option value="0x01B0000000000055">Season 1</option>
+  <option value="0x01B0000000000065">Season 2</option>
+  <option value="0x01B0000000000067">Season 3</option>
+  <option value="0x01B000000000006B">Season 4</option>
+  <!-- <option value="">Season 5</option> -->
+  <option value="0x01B0000000000077">Season 6</option>
   <option value="0x01B000000000007A">Season 7</option>
 </select>
