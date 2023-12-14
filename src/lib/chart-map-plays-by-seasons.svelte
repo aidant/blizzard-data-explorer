@@ -20,8 +20,6 @@
       ]),
     )
 
-    console.log(numberOfMapsPlayed)
-
     new Chart(canvas, {
       type: numberOfSeasons === 1 ? 'bar' : 'line',
       data: {
