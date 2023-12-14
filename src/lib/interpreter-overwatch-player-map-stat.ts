@@ -1,6 +1,15 @@
 import type { BlizzardData } from './parse-blizzard-data'
 
-const map_mappings = {
+export const season_mappings = {
+  '0x01B0000000000055': 'Season 1',
+  '0x01B0000000000065': 'Season 2',
+  '0x01B0000000000067': 'Season 3',
+  '0x01B000000000006B': 'Season 4',
+  '0x01B0000000000077': 'Season 6',
+  '0x01B000000000007A': 'Season 7',
+} as const
+
+export const map_mappings = {
   '0x0800000000000827': 'Circuit Royal',
   '0x0800000000000938': 'Paraíso',
   '0x0800000000000AEB': 'New Queen Street',
@@ -12,9 +21,9 @@ const map_mappings = {
   '0x0800000000000D53': 'Esperança',
   '0x0800000000000E13': 'New Junk City',
   '0x0800000000000EC0': 'Samoa',
-}
+} as const
 
-const result_mappings = {
+export const result_mappings = {
   'Defense Rpl {0}:Enter:Enters;': 'enter',
   'Defense Rpl {0}:Win:Wins;': 'win',
   'Map Rpl {0}:Enter:Enters;': 'enter',
@@ -22,9 +31,9 @@ const result_mappings = {
   'Map Rpl {0}:Win:Wins;': 'win',
   'Offense Rpl {0}:Enter:Enters;': 'enter',
   'Offense Rpl {0}:Win:Wins;': 'win',
-}
+} as const
 
-const gamemode_mappings = {
+export const gamemode_mappings = {
   'Circuit Royal': 'Escort',
   'Dorado': 'Escort',
   'Route 66': 'Escort',
@@ -57,72 +66,44 @@ const gamemode_mappings = {
   'Paris': 'Assault',
   'Temple of Anubis': 'Assault',
   'Volskaya Industries': 'Assault',
-}
+} as const
 
-export interface Filter {
-  season?: string
-}
+export type InterpretedOverwatchPlayerMapStat = {
+  season: (typeof season_mappings)[keyof typeof season_mappings]
+  map: keyof typeof gamemode_mappings
+  statistics: {
+    enter: number
+    win: number
+    tie: number
+  }
+}[]
 
-const showMapStats = (maps: Record<string, { win: number; enter: number; tie: number }>) => {
-  console.log(
-    JSON.stringify(
-      Object.fromEntries(
-        Object.entries(maps)
-          .map(([key, map]: [string, any]) => [
-            key.padStart(21, ' '),
-            Number((map.win / (map.enter - (map.tie || 0))).toFixed(2)),
-          ])
-          .sort((a, b) => (a[1] > b[1] ? 1 : -1)),
-      ),
-      null,
-      2,
-    ),
-  )
+export const interpreterOverwatchPlayerMapStat = (
+  data: BlizzardData,
+): InterpretedOverwatchPlayerMapStat => {
+  const results: Record<string, InterpretedOverwatchPlayerMapStat[number]> = {}
 
-  console.log(
-    JSON.stringify(
-      Object.fromEntries(
-        Object.entries(maps)
-          .map(([key, map]: [string, any]) => [key.padStart(21, ' '), map.enter])
-          .sort((a, b) => (a[1] > b[1] ? 1 : -1)),
-      ),
-      null,
-      2,
-    ),
-  )
-}
+  for (const statistic of data['overwatch_pc']['player_map_stat']) {
+    const season = season_mappings[statistic.stat_context_name as keyof typeof season_mappings]
+    const map = map_mappings[statistic.map as keyof typeof map_mappings] || statistic.map
 
-export const interpreterOverwatchPlayerMapStat = (data: BlizzardData, filter: Filter) => {
-  const maps: Record<string, { win: number; enter: number; tie: number }> = data['overwatch_pc'][
-    'player_map_stat'
-  ].reduce((maps: any, map: any) => {
-    if (filter.season && map.stat_context_name !== filter.season) {
-      return maps
+    if (!season || !map) continue
+
+    const key = `${season} - ${map}`
+
+    results[key] ??= {
+      season,
+      map,
+      statistics: {
+        enter: 0,
+        win: 0,
+        tie: 0,
+      },
     }
 
-    const name = map_mappings[map.map as keyof typeof map_mappings] || map.map
-
-    maps[name] ??= {}
-    maps[name][result_mappings[map.stat as keyof typeof result_mappings]] ??= 0
-    maps[name][result_mappings[map.stat as keyof typeof result_mappings]] += map.amount
-
-    return maps
-  }, {})
-
-  showMapStats(maps)
-
-  const gamemodes: Record<string, { win: number; enter: number; tie: number }> = {}
-
-  for (const [name, map] of Object.entries(maps)) {
-    gamemodes[gamemode_mappings[name as keyof typeof gamemode_mappings]] ??= {
-      win: 0,
-      enter: 0,
-      tie: 0,
-    }
-    gamemodes[gamemode_mappings[name as keyof typeof gamemode_mappings]].enter += map.enter
-    gamemodes[gamemode_mappings[name as keyof typeof gamemode_mappings]].win += map.win
-    gamemodes[gamemode_mappings[name as keyof typeof gamemode_mappings]].tie += map.tie
+    results[key].statistics[result_mappings[statistic.stat as keyof typeof result_mappings]] +=
+      statistic.amount
   }
 
-  showMapStats(gamemodes)
+  return Object.values(results)
 }

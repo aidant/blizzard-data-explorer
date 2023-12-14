@@ -12,9 +12,14 @@
     "preview": "vite preview",
     "start": "vite dev"
   },
+  "dependencies": {
+    "chart.js": "^4.4.1",
+    "lodash-es": "^4.17.21"
+  },
   "devDependencies": {
     "@sveltejs/adapter-static": "^2.0.2",
     "@sveltejs/kit": "^1.20.5",
+    "@types/lodash-es": "^4.17.12",
     "@typescript-eslint/eslint-plugin": "^5.60.0",
     "@typescript-eslint/parser": "^5.60.0",
     "autoprefixer": "^10.4.14",

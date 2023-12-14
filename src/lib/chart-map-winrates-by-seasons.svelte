@@ -1,0 +1,38 @@
+<script lang="ts">
+  import { Chart } from 'chart.js/auto'
+  import { groupBy } from 'lodash-es'
+  import { onMount } from 'svelte'
+  import type { InterpretedOverwatchPlayerMapStat } from './interpreter-overwatch-player-map-stat'
+
+  export let data: InterpretedOverwatchPlayerMapStat
+
+  let canvas: HTMLCanvasElement
+
+  onMount(() => {
+    new Chart(canvas, {
+      type: 'line',
+      data: {
+        datasets: Object.entries(
+          groupBy(
+            data.map((entry: any) => ({
+              label: entry.map,
+              x: entry.season,
+              y: entry.statistics.win / (entry.statistics.enter - (entry.statistics.tie || 0)),
+            })),
+            'label',
+          ),
+        ).map(([label, data]) => ({
+          label,
+          data: data.map((data) => ({
+            x: data.x,
+            y: data.y,
+          })),
+        })),
+      },
+    })
+  })
+</script>
+
+<div class="block">
+  <canvas bind:this={canvas} />
+</div>
