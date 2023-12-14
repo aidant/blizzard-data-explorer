@@ -224,7 +224,9 @@
 </div> -->
 
 <script lang="ts">
+  import ChartGamemodePlaysBySeasons from '$lib/chart-gamemode-plays-by-seasons.svelte'
   import ChartGamemodeWinratesBySeasons from '$lib/chart-gamemode-winrates-by-seasons.svelte'
+  import ChartMapPlaysBySeasons from '$lib/chart-map-plays-by-seasons.svelte'
   import ChartMapWinratesBySeasons from '$lib/chart-map-winrates-by-seasons.svelte'
   import {
     interpreterOverwatchPlayerMapStat,
@@ -250,4 +252,6 @@
 {#if state === 'exploring'}
   <ChartMapWinratesBySeasons data={interpretedOverwatchPlayerMapStat} />
   <ChartGamemodeWinratesBySeasons data={interpretedOverwatchPlayerMapStat} />
+  <ChartMapPlaysBySeasons data={interpretedOverwatchPlayerMapStat} />
+  <ChartGamemodePlaysBySeasons data={interpretedOverwatchPlayerMapStat} />
 {/if}
