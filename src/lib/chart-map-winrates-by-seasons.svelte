@@ -9,8 +9,10 @@
   let canvas: HTMLCanvasElement
 
   onMount(() => {
+    const numberOfSeasons = Object.values(groupBy(data, 'season')).length
+
     new Chart(canvas, {
-      type: 'line',
+      type: numberOfSeasons === 1 ? 'bar' : 'line',
       data: {
         datasets: Object.entries(
           groupBy(
