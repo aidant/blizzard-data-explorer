@@ -5,7 +5,9 @@
     type InterpretedOverwatchPlayerMapStat,
   } from '$lib/interpreter-overwatch-player-map-stat'
 
+  export let title: string
   export let data: InterpretedOverwatchPlayerMapStat
+  export let auto: boolean
 
   const gamemodes: Record<string, InterpretedOverwatchPlayerMapStat[number]> = {}
 
@@ -27,4 +29,8 @@
   }
 </script>
 
-<ChartMapWinratesBySeasons data={Object.values(gamemodes)} />
+<ChartMapWinratesBySeasons
+  {title}
+  {auto}
+  data={Object.values(gamemodes)}
+/>

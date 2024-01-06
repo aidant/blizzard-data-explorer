@@ -5,7 +5,9 @@
   } from '$lib/interpreter-overwatch-player-map-stat'
   import ChartMapPlaysBySeasons from './chart-map-plays-by-seasons.svelte'
 
+  export let title: string
   export let data: InterpretedOverwatchPlayerMapStat
+  export let auto: boolean
 
   const gamemodes: Record<string, InterpretedOverwatchPlayerMapStat[number]> = {}
 
@@ -27,4 +29,8 @@
   }
 </script>
 
-<ChartMapPlaysBySeasons data={Object.values(gamemodes)} />
+<ChartMapPlaysBySeasons
+  {title}
+  {auto}
+  data={Object.values(gamemodes)}
+/>

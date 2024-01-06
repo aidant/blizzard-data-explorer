@@ -4,7 +4,9 @@
   import { onMount } from 'svelte'
   import type { InterpretedOverwatchPlayerMapStat } from './interpreter-overwatch-player-map-stat'
 
+  export let title: string
   export let data: InterpretedOverwatchPlayerMapStat
+  export let auto: boolean
 
   let canvas: HTMLCanvasElement
 
@@ -40,10 +42,23 @@
           })),
         })),
       },
+      options: auto
+        ? undefined
+        : {
+            scales: {
+              y: {
+                min: 0,
+                max: 1,
+              },
+            },
+          },
     })
   })
 </script>
 
-<div class="block">
-  <canvas bind:this={canvas} />
+<div>
+  <h1 class="text-center text-2xl">{title}</h1>
+  <div class="block">
+    <canvas bind:this={canvas} />
+  </div>
 </div>

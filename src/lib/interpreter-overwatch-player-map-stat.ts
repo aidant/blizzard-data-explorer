@@ -105,5 +105,31 @@ export const interpreterOverwatchPlayerMapStat = (
       statistic.amount
   }
 
+  return Object.values(results).sort((a, b) => {
+    return Number(a.season.replace('Season ', '')) - Number(b.season.replace('Season ', ''))
+  })
+}
+
+export const summarizeOverwatchPlayerMapStat = (
+  interpretedOverwatchPlayerMapStat: InterpretedOverwatchPlayerMapStat,
+): InterpretedOverwatchPlayerMapStat => {
+  const results: Record<string, InterpretedOverwatchPlayerMapStat[number]> = {}
+
+  for (const statistic of interpretedOverwatchPlayerMapStat) {
+    results[statistic.map] ??= {
+      season: 'All' as any,
+      map: statistic.map,
+      statistics: {
+        enter: 0,
+        win: 0,
+        tie: 0,
+      },
+    }
+
+    results[statistic.map].statistics.enter += statistic.statistics.enter
+    results[statistic.map].statistics.win += statistic.statistics.win
+    results[statistic.map].statistics.tie += statistic.statistics.tie
+  }
+
   return Object.values(results)
 }
