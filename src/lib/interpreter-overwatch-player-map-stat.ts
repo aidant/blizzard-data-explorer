@@ -7,6 +7,8 @@ export const season_mappings = {
   '0x01B000000000006B': 'Season 4',
   '0x01B0000000000077': 'Season 6',
   '0x01B000000000007A': 'Season 7',
+  '0x01B000000000008F': 'Season 8',
+  '0x01B0000000000091': 'Season 9',
 } as const
 
 export const map_mappings = {
